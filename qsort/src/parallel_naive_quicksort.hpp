@@ -8,7 +8,7 @@
 #include <vector>
 
 template <class Iterator>
-void parallel_quicksort(Iterator begin, Iterator end) {
+void parallel_naive_quicksort(Iterator begin, Iterator end) {
   using T = typename std::iterator_traits<Iterator>::value_type;
   const auto size = end - begin;
   if (size <= 1) {
@@ -17,19 +17,21 @@ void parallel_quicksort(Iterator begin, Iterator end) {
   T supportElement = *begin;
   auto lower = std::vector<T>{};
   lower.reserve(size);
-  std::copy_if(std::execution::par, begin + 1, end, std::back_inserter(lower),
-               impl::LessThan<T>{supportElement});
-  parallel_quicksort(lower.begin(), lower.end());
+  std::copy_if(std::execution::par_unseq, begin + 1, end,
+               std::back_inserter(lower), impl::LessThan<T>{supportElement});
   auto higher = std::vector<T>{};
   higher.reserve(size);
-  std::copy_if(std::execution::par, begin + 1, end, std::back_inserter(higher),
+  std::copy_if(std::execution::par_unseq, begin + 1, end,
+               std::back_inserter(higher),
                impl::NotLessThan<T>{supportElement});
-  parallel_quicksort(higher.begin(), higher.end());
-  auto outIter =
-      std::copy(std::execution::par, lower.begin(), lower.end(), begin);
+  auto outIter = begin;
+  parallel_naive_quicksort(lower.begin(), lower.end());
+  outIter =
+      std::copy(std::execution::par_unseq, lower.begin(), lower.end(), outIter);
   *outIter = std::move(supportElement);
   ++outIter;
-  std::copy(std::execution::par, higher.begin(), higher.end(), outIter);
+  parallel_naive_quicksort(higher.begin(), higher.end());
+  std::copy(std::execution::par_unseq, higher.begin(), higher.end(), outIter);
 }
 
 #endif // PARALLEL_QUICKSORT_HPP
