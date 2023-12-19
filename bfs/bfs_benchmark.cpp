@@ -47,8 +47,9 @@ static void BM_benchmark_parallel_bfs_blocked(benchmark::State &state) {
   }
 }
 
-//BENCHMARK(BM_benchmark_sequential_bfs<true>)->Iterations(5);
-//BENCHMARK(BM_benchmark_sequential_bfs<false>)->Iterations(5);
-//BENCHMARK(BM_benchmark_parallel_bfs)->Iterations(5);
+BENCHMARK(BM_benchmark_sequential_bfs<true>)->Iterations(5);
+BENCHMARK(BM_benchmark_sequential_bfs<false>)->Iterations(5);
+BENCHMARK(BM_benchmark_parallel_bfs)->Iterations(5);
+BENCHMARK(BM_benchmark_parallel_bfs_blocked<2048>)->Iterations(5);
 BENCHMARK(BM_benchmark_parallel_bfs_blocked<1024>)->Iterations(5);
-//BENCHMARK(BM_benchmark_parallel_bfs_blocked<256>)->Iterations(5);
+BENCHMARK(BM_benchmark_parallel_bfs_blocked<256>)->Iterations(5);
