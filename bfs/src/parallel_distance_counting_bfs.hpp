@@ -2,18 +2,19 @@
 #define PARALLEL_DISTANCE_COUNTING_BFS_HPP
 
 #include "experimental_graph.hpp"
+#include <ranges>
 #include <tbb/concurrent_vector.h>
 #include <tbb/parallel_for.h>
 
 namespace detail {
 
-void process_layer(ExperimentalGraph &graph,
-                   tbb::concurrent_vector<std::size_t> &srcVec,
+void process_layer(ExperimentalGraph<true> &graph,
+                   const tbb::concurrent_vector<std::size_t> &srcVec,
                    tbb::concurrent_vector<std::size_t> &destVec);
 
 template <std::size_t blockSize>
-void process_layer_blocked(ExperimentalGraph &graph,
-                           tbb::concurrent_vector<std::size_t> &srcVec,
+void process_layer_blocked(ExperimentalGraph<true> &graph,
+                           const tbb::concurrent_vector<std::size_t> &srcVec,
                            tbb::concurrent_vector<std::size_t> &destVec) {
   auto blocksCnt = (srcVec.size() - 1) / blockSize + 1;
   tbb::parallel_for(
@@ -24,7 +25,7 @@ void process_layer_blocked(ExperimentalGraph &graph,
         for (auto i : std::views::iota(beginI, endI)) {
           const auto id = srcVec[i];
           auto currDistance = graph.getNode(id).getDistanceTo0();
-          auto neighbors = graph.getNeighborsRng(id);
+          auto neighbors = graph.getNode(id).getNeighbors();
           for (auto nbr : neighbors) {
             if (graph.getNode(nbr).decreaseDistanceTo0(currDistance + 1)) {
               toVisit.push_back(nbr);
@@ -36,7 +37,7 @@ void process_layer_blocked(ExperimentalGraph &graph,
 }
 
 template <auto blocked, auto... args>
-void parallel_distance_counting_bfs_impl(ExperimentalGraph &graph) {
+void parallel_distance_counting_bfs_impl(ExperimentalGraph<true> &graph) {
   if (graph.nodesCnt() != 0) {
     tbb::concurrent_vector<std::size_t> q1;
     tbb::concurrent_vector<std::size_t> q2;
@@ -68,10 +69,10 @@ void parallel_distance_counting_bfs_impl(ExperimentalGraph &graph) {
 
 } // namespace detail
 
-void parallel_distance_counting_bfs(ExperimentalGraph &graph);
+void parallel_distance_counting_bfs(ExperimentalGraph<true> &graph);
 
 template <std::size_t blockSize>
-void parallel_distance_counting_bfs_blocked(ExperimentalGraph &graph) {
+void parallel_distance_counting_bfs_blocked(ExperimentalGraph<true> &graph) {
   detail::parallel_distance_counting_bfs_impl<true, blockSize>(graph);
 }
 

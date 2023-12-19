@@ -65,3 +65,24 @@ TEST(ParallelBfs, CubeFive) {
     EXPECT_EQ(graph.getNode(id).getDistanceTo0(), 2 + 1);
   }
 }
+
+TEST(ParallelBfs, Cube100) {
+  auto graph = CubeExperimentalGraphFiller(100).generate();
+  parallel_distance_counting_bfs(graph);
+  auto conv = CubeGraphCoordinatesConverter(100);
+
+  {
+    auto id = conv.toId(51, 52, 53);
+    EXPECT_EQ(graph.getNode(id).getDistanceTo0(), 51 + 52 + 53);
+  }
+
+  {
+    auto id = conv.toId(98, 97, 34);
+    EXPECT_EQ(graph.getNode(id).getDistanceTo0(), 98 + 97 + 34);
+  }
+
+  {
+    auto id = conv.toId(99, 99, 99);
+    EXPECT_EQ(graph.getNode(id).getDistanceTo0(), 99 * 3);
+  }
+}
