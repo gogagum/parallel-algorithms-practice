@@ -22,9 +22,31 @@ void process_layer(ExperimentalGraph &graph,
         destVec.grow_by(toVisit.begin(), toVisit.end());
       });
 }
-} // namespace
 
-void parallel_distance_counting_bfs(ExperimentalGraph &graph) {
+void process_layer_blocked(ExperimentalGraph &graph,
+                           tbb::concurrent_vector<std::size_t> &srcVec,
+                           tbb::concurrent_vector<std::size_t> &destVec) {
+  constexpr std::size_t blockSize = 1024;
+  auto blocks = std::ranges::chunk_view(srcVec, blockSize);
+  std::for_each(
+      std::execution::par_unseq, blocks.begin(), blocks.end(),
+      [&graph, &destVec](const auto &ids) {
+        std::vector<std::size_t> toVisit;
+        for (auto id : ids) {
+          auto currDistance = graph.getNode(id).getDistanceTo0();
+          auto neighbors = graph.getNeighborsRng(id);
+          for (auto nbr : neighbors) {
+            if (graph.getNode(nbr).decreaseDistanceTo0(currDistance + 1)) {
+              toVisit.push_back(nbr);
+            }
+          }
+        }
+        destVec.grow_by(toVisit.begin(), toVisit.end());
+      });
+}
+
+template <bool blocked>
+void parallel_distance_counting_bfs_impl(ExperimentalGraph &graph) {
   if (graph.nodesCnt() != 0) {
     tbb::concurrent_vector<std::size_t> q1;
     tbb::concurrent_vector<std::size_t> q2;
@@ -43,7 +65,23 @@ void parallel_distance_counting_bfs(ExperimentalGraph &graph) {
          !getQueuesPair(layerIndex).first.get().empty(); ++layerIndex) {
       auto [q1, q2] = getQueuesPair(layerIndex);
       q2.get().clear();
-      process_layer(graph, q1, q2);
+      if constexpr (blocked) {
+        process_layer_blocked(graph, q1, q2);
+      }
+      else
+      {
+        process_layer(graph, q1, q2);
+      }
     }
   }
+}
+
+} // namespace
+
+void parallel_distance_counting_bfs(ExperimentalGraph &graph) {
+  parallel_distance_counting_bfs_impl<false>(graph);
+}
+
+void parallel_distance_counting_bfs_blocked(ExperimentalGraph &graph) {
+  parallel_distance_counting_bfs_impl<true>(graph);
 }

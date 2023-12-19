@@ -5,4 +5,6 @@
 
 void parallel_distance_counting_bfs(ExperimentalGraph &graph);
 
+void parallel_distance_counting_bfs_blocked(ExperimentalGraph &graph);
+
 #endif
