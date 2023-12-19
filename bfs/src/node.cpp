@@ -1,9 +1,7 @@
 #include "node.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////
-void Node::addEdge_(std::size_t id) {
-  neighbors_.push_back(id);
-}
+void Node::addEdge_(std::size_t id) { neighbors_.push_back(id); }
 
 ////////////////////////////////////////////////////////////////////////////////
 Node::Node(const Node &other)
@@ -22,4 +20,9 @@ bool Node::decreaseDistanceTo0(std::uint64_t distance) {
 ////////////////////////////////////////////////////////////////////////////////
 std::span<const std::size_t> Node::getNeighbors() const {
   return {neighbors_.cbegin(), neighbors_.cend()};
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Node::resetDistanceToInf() {
+  distanceTo0_ = std::numeric_limits<std::uint64_t>::max();
 }

@@ -7,7 +7,6 @@
 #include <ranges>
 #include <span>
 #include <type_traits>
-#include <unordered_set>
 #include <vector>
 
 class ExperimentalGraph {
@@ -32,6 +31,8 @@ public:
   std::size_t nodesCnt() const { return nodes_.size(); }
 
   Node &getNode(std::size_t id) { return nodes_[id]; };
+
+  void resetDistancesToDefault();
 };
 
 template <class EdgesRng>

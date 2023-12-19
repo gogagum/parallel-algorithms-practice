@@ -27,6 +27,7 @@ public:
   bool decreaseDistanceTo0(std::uint64_t distance);
   std::span<const std::size_t> getNeighbors() const;
   std::uint64_t getDistanceTo0() const { return distanceTo0_.load(); }
+  void resetDistanceToInf();
 
 private:
   friend class ExperimentalGraph;
@@ -34,9 +35,8 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 template <std::ranges::input_range IdRng>
-    requires std::is_same_v<std::size_t, std::ranges::range_value_t<IdRng>>
-Node::Node(std::size_t id, const IdRng& neighbors)
-    : id_{id}, neighbors_{} {
+  requires std::is_same_v<std::size_t, std::ranges::range_value_t<IdRng>>
+Node::Node(std::size_t id, const IdRng &neighbors) : id_{id}, neighbors_{} {
   std::ranges::copy(neighbors, std::back_inserter(neighbors_));
 }
 
