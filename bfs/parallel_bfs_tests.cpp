@@ -17,7 +17,8 @@ TEST(ParallelBfs, OnGraphWithOneNode) {
 }
 
 TEST(ParallelBfs, OnGraphWithTwoNonConnectedNodes) {
-  auto graph = ExperimentalGraph(2, std::array<Edge, 0>{});
+  auto graph = ExperimentalGraph(
+      std::array{std::vector<std::size_t>{}, std::vector<std::size_t>{}});
   parallel_distance_counting_bfs(graph);
 
   EXPECT_EQ(graph.getNode(0).getDistanceTo0(), 0);
@@ -26,7 +27,8 @@ TEST(ParallelBfs, OnGraphWithTwoNonConnectedNodes) {
 }
 
 TEST(ParallelBfs, OnGraphWithTwoConnectedNodes) {
-  auto graph = ExperimentalGraph(2, std::array<Edge, 1>{Edge{0, 1}});
+  auto graph =
+      ExperimentalGraph(std::array{std::vector{1uz}, std::vector{0uz}});
   parallel_distance_counting_bfs(graph);
 
   EXPECT_EQ(graph.getNode(0).getDistanceTo0(), 0);
@@ -34,8 +36,8 @@ TEST(ParallelBfs, OnGraphWithTwoConnectedNodes) {
 }
 
 TEST(ParallelBfs, BambooThree) {
-  auto graph =
-      ExperimentalGraph(3, std::array<Edge, 2>{Edge{0, 1}, Edge{1, 2}});
+  auto graph = ExperimentalGraph(
+      std::array{std::vector{1uz}, std::vector{0uz, 2uz}, std::vector{1uz}});
   parallel_distance_counting_bfs(graph);
 
   EXPECT_EQ(graph.getNode(0).getDistanceTo0(), 0);

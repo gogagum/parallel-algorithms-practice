@@ -61,18 +61,20 @@ TEST(CubeGraphCoordinatesConverter, ToId) {
 }
 
 TEST(GraphForDistanceCounting, Construct) {
-  auto graph = ExperimentalGraph(1, std::array<Edge, 0>{});
+  auto graph = ExperimentalGraph(std::array<std::vector<std::size_t>, 0>{});
   EXPECT_TRUE(graph.getNeighborsRng(0).empty());
 }
 
 TEST(GraphForDistanceCounting, TwoNonConnectedNodes) {
-  auto graph = ExperimentalGraph(2, std::array<Edge, 0>{});
+  auto graph = ExperimentalGraph(std::array<std::vector<std::size_t>, 2>{
+      std::vector<std::size_t>{}, std::vector<std::size_t>{}});
   EXPECT_TRUE(graph.getNeighborsRng(0).empty());
   EXPECT_TRUE(graph.getNeighborsRng(1).empty());
 }
 
 TEST(GraphForDistanceCounting, TwoConnectedNodes) {
-  auto graph = ExperimentalGraph(2, std::array<Edge, 1>{{0, 1}});
+  auto graph = ExperimentalGraph(std::array<std::vector<std::size_t>, 2>{
+      std::vector{1uz}, std::vector{0uz}});
   EXPECT_EQ(graph.getNeighborsRng(0).size(), 1);
   EXPECT_EQ(graph.getNeighborsRng(0)[0], 1);
   EXPECT_EQ(graph.getNeighborsRng(1).size(), 1);

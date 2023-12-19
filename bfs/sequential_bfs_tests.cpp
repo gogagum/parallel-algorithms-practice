@@ -17,16 +17,18 @@ TEST(SequentialBfs, OnGraphWithOneNode) {
 }
 
 TEST(SequentialBfs, OnGraphWithTwoNonConnectedNodes) {
-    auto graph = ExperimentalGraph(2, std::array<Edge, 0>{});
-    sequential_distance_counting_bfs(graph);
+  auto graph = ExperimentalGraph(
+      std::array{std::vector<std::size_t>{}, std::vector<std::size_t>{}});
+  sequential_distance_counting_bfs(graph);
 
-    EXPECT_EQ(graph.getNode(0).getDistanceTo0(), 0);
-    EXPECT_EQ(graph.getNode(1).getDistanceTo0(),
-              std::numeric_limits<std::uint64_t>::max());
+  EXPECT_EQ(graph.getNode(0).getDistanceTo0(), 0);
+  EXPECT_EQ(graph.getNode(1).getDistanceTo0(),
+            std::numeric_limits<std::uint64_t>::max());
 }
 
 TEST(SequentialBfs, OnGraphWithTwoConnectedNodes) {
-    auto graph = ExperimentalGraph(2, std::array<Edge, 1>{Edge{0, 1}});
+    auto graph =
+      ExperimentalGraph(std::array{std::vector{1uz}, std::vector{0uz}});
     sequential_distance_counting_bfs(graph);
 
     EXPECT_EQ(graph.getNode(0).getDistanceTo0(), 0);
@@ -34,7 +36,8 @@ TEST(SequentialBfs, OnGraphWithTwoConnectedNodes) {
 }
 
 TEST(SequentialBfs, BambooThree) {
-    auto graph = ExperimentalGraph(3, std::array<Edge, 2>{Edge{0, 1}, Edge{1, 2}});
+    auto graph = ExperimentalGraph(std::array{
+      std::vector{1uz}, std::vector{0uz, 2uz}, std::vector{1uz}});
     sequential_distance_counting_bfs(graph);
 
     EXPECT_EQ(graph.getNode(0).getDistanceTo0(), 0);

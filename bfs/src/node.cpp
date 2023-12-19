@@ -18,7 +18,7 @@ bool Node::decreaseDistanceTo0(std::uint64_t distance) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::span<const std::size_t> Node::getNeighbors() const {
+std::span<const std::uint32_t> Node::getNeighbors() const {
   return {neighbors_.cbegin(), neighbors_.cend()};
 }
 

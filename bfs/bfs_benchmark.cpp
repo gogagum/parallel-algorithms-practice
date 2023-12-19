@@ -4,8 +4,10 @@
 #include <benchmark/benchmark.h>
 #include <oneapi/tbb/global_control.h>
 
+constexpr std::size_t cubeSideSize = 500;
+
 static void BM_benchmark_sequential_bfs(benchmark::State& state) {
-    auto graph = CubeExperimentalGraphFiller(300).generate();
+    auto graph = CubeExperimentalGraphFiller(cubeSideSize).generate();
     
     for ([[maybe_unused]] const auto st: state) {
         sequential_distance_counting_bfs(graph);
@@ -19,7 +21,7 @@ static void BM_benchmark_parallel_bfs(benchmark::State& state) {
     oneapi::tbb::global_control global_limit(
       oneapi::tbb::global_control::max_allowed_parallelism, 4);
 
-    auto graph = CubeExperimentalGraphFiller(300).generate();
+    auto graph = CubeExperimentalGraphFiller(cubeSideSize).generate();
 
     for ([[maybe_unused]] const auto st: state) {
         parallel_distance_counting_bfs(graph);
@@ -34,7 +36,7 @@ static void BM_benchmark_parallel_bfs_blocked(benchmark::State& state) {
     oneapi::tbb::global_control global_limit(
       oneapi::tbb::global_control::max_allowed_parallelism, 4);
 
-    auto graph = CubeExperimentalGraphFiller(300).generate();
+    auto graph = CubeExperimentalGraphFiller(cubeSideSize).generate();
 
     for ([[maybe_unused]] const auto st: state) {
         parallel_distance_counting_bfs_blocked<blockSize>(graph);
