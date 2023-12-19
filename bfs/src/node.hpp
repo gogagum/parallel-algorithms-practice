@@ -26,6 +26,7 @@ public:
   Node(std::size_t id, const IdRng &neighbors);
   bool decreaseDistanceTo0(std::uint64_t distance);
   std::span<const std::size_t> getNeighbors() const;
+  std::uint64_t getDistanceTo0() const { return distanceTo0_.load(); }
 
 private:
   friend class ExperimentalGraph;
